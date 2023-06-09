@@ -1,41 +1,22 @@
-import collections
-from typing import Dict, List
-
+from typing import List
 from access_patterns import generate_interleaved_pattern, generate_markdown_table, generate_random_pattern, generate_sequential_pattern, generate_strided_pattern
 
-class MarkovNode:
-    def __init__(self, address: int):
-        self.address = address
-        self.transitions = collections.defaultdict(int)
-        self.total_transitions = 0
 
-    def add_transition(self, next_address: int):
-        self.transitions[next_address] += 1
-        self.total_transitions += 1
-
-    def get_most_probable_next_address(self) -> int:
-        if not self.transitions:
-            return None
-        return max(self.transitions, key=self.transitions.get)
-
-class MarkovPrefetcher:
+class StridePrefetcher:
     def __init__(self):
-        self.markov_table: Dict[int, MarkovNode] = {}
         self.prev_address: int = None
+        self.stride: int = None
         self.prefetch_hits = 0
         self.prefetch_requests = 0
 
     def access(self, address: int):
-        if address not in self.markov_table:
-            self.markov_table[address] = MarkovNode(address)
-
         if self.prev_address is not None:
-            self.markov_table[self.prev_address].add_transition(address)
+            current_stride = address - self.prev_address
+            if self.stride is not None:
+                prefetch_address = address + self.stride
+                self.prefetch(prefetch_address)
 
-        if self.markov_table[address].total_transitions > 0:
-            node = self.markov_table[address]
-            prefetch_address = node.get_most_probable_next_address()
-            self.prefetch(prefetch_address)
+            self.stride = current_stride
 
         self.prev_address = address
 
@@ -50,22 +31,20 @@ class MarkovPrefetcher:
         if self.prefetch_requests == 0:
             return 0
         return self.prefetch_hits / self.prefetch_requests
-
-def simulate_memory_accesses(prefetcher: MarkovPrefetcher, addresses: List[int]):
-    for address in addresses:
+    
+def simulate_memory_accesses(prefetcher: StridePrefetcher, addresses: List[int]):
+    for i, address in enumerate(addresses):
         print(f"Accessing address: {address}")
         prefetcher.access(address)
 
-        if prefetcher.prev_address is not None:
-            prefetch_address = prefetcher.markov_table[prefetcher.prev_address].get_most_probable_next_address()
-            if prefetch_address == address:
-                prefetcher.report_prefetch_hit()
-
+        if prefetcher.stride is not None and i + 1 < len(addresses) and prefetcher.prev_address + prefetcher.stride == addresses[i + 1]:
+            prefetcher.report_prefetch_hit()
+    
 if __name__ == "__main__":
     results = {}
 
     print("Sequential access pattern:")
-    prefetcher = MarkovPrefetcher()
+    prefetcher = StridePrefetcher()
     memory_accesses = generate_sequential_pattern(10)
     simulate_memory_accesses(prefetcher, memory_accesses)
     accuracy = prefetcher.get_accuracy()
@@ -73,7 +52,7 @@ if __name__ == "__main__":
     results["Sequential"] = accuracy
 
     print("\nStrided access pattern:")
-    prefetcher = MarkovPrefetcher()
+    prefetcher = StridePrefetcher()
     memory_accesses = generate_strided_pattern(0, 2, 10)
     simulate_memory_accesses(prefetcher, memory_accesses)
     accuracy = prefetcher.get_accuracy()
@@ -81,7 +60,7 @@ if __name__ == "__main__":
     results["Strided"] = accuracy
 
     print("\nInterleaved access pattern:")
-    prefetcher = MarkovPrefetcher()
+    prefetcher = StridePrefetcher()
     memory_accesses = generate_interleaved_pattern(10)
     simulate_memory_accesses(prefetcher, memory_accesses)
     accuracy = prefetcher.get_accuracy()
@@ -89,7 +68,7 @@ if __name__ == "__main__":
     results["Interleaved"] = accuracy
 
     print("\nRandom access pattern:")
-    prefetcher = MarkovPrefetcher()
+    prefetcher = StridePrefetcher()
     memory_accesses = generate_random_pattern(10)
     simulate_memory_accesses(prefetcher, memory_accesses)
     accuracy = prefetcher.get_accuracy()
