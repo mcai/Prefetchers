@@ -1,54 +1,56 @@
-# Cache Prefetcher Simulation
+# Markov预取器模拟
 
-This project simulates two types of cache prefetchers: Markov Prefetcher and Stride Prefetcher. The prefetchers are tested against different memory access patterns, and their accuracy is calculated.
+该项目模拟了Markov预取器，并针对不同的内存访问模式进行测试，计算其准确性。
 
-## Files
+## 文件
 
-- markov_predictor.py: Contains the implementation of the Markov Prefetcher and its simulation.
-- stride_prefetcher.py: Contains the implementation of the Stride Prefetcher and its simulation.
-- access_patterns.py: Contains functions to generate different memory access patterns and a function to generate a Markdown table for the results.
+- `markov_predictor.py`: 包含Markov预取器的实现及其模拟。
+- `access_patterns.py`: 包含生成不同内存访问模式的函数和生成Markdown表格结果的函数。
 
-## Usage
+## 使用方法
 
-1. Run markov_predictor.py to simulate the Markov Prefetcher with different memory access patterns. The output will display the accuracy of the prefetcher for each pattern and a Markdown table with the results.
+1. 运行 `markov_predictor.py` 来模拟不同内存访问模式下的Markov预取器。输出将显示每种模式下预取器的准确性，并生成结果的Markdown表格。
 
 ```bash
 python markov_predictor.py
 ```
 
-2. Run stride_prefetcher.py to simulate the Stride Prefetcher with different memory access patterns. The output will display the accuracy of the prefetcher for each pattern and a Markdown table with the results.
+## 示例输出
+
+输出将会是如下格式：
 
 ```bash
-python stride_prefetcher.py
-```
+顺序访问模式:
+...
+准确率: 0.9
+...
+跨距访问模式:
+...
+准确率: 0.8
+...
+交错访问模式:
+...
+准确率: 0.7
+...
+随机访问模式:
+...
+准确率: 0.6
+...
+重复访问模式:
+...
+准确率: 0.85
+...
+自定义访问模式:
+...
+准确率: 0.8
+...
 
-## Example Output
-
-The output will be in the following format:
-
-```bash
-Sequential access pattern:
-...
-Accuracy: 0.9
-...
-Strided access pattern:
-...
-Accuracy: 0.8
-...
-Interleaved access pattern:
-...
-Accuracy: 0.7
-...
-Random access pattern:
-...
-Accuracy: 0.6
-...
-
-Results in Markdown table:
-| Access Pattern | Accuracy |
-| -------------- | -------- |
-| Sequential     | 0.9      |
-| Strided        | 0.8      |
-| Interleaved    | 0.7      |
-| Random         | 0.6      |
-```
+实验结果的Markdown表格：
+| 访问模式 | 预测准确性 |
+| -------- | ---------- |
+| 顺序     | 0.9        |
+| 跨距     | 0.8        |
+| 交错     | 0.7        |
+| 随机     | 0.6        |
+| 重复     | 0.85       |
+| 自定义   | 0.8        |

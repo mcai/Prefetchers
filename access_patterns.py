@@ -17,8 +17,12 @@ def generate_random_pattern(length: int) -> List[int]:
     import random
     return [random.randint(0, length - 1) for _ in range(length)]
 
+# 生成重复访问模式
+def generate_repeated_pattern(pattern: List[int], repetitions: int) -> List[int]:
+    return pattern * repetitions
+
 # 生成Markdown表格
 def generate_markdown_table(results: Dict[str, float]) -> str:
     header = "| 访问模式 | 预测准确性 |\n| -------- | ---------- |\n"
-    rows = [f"| {key} | {value} |" for key, value in results.items()]
+    rows = [f"| {key} | {value:.2f} |" for key, value in results.items()]
     return header + "\n".join(rows)
