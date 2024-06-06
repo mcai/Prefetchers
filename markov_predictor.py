@@ -1,6 +1,34 @@
-from typing import List, Optional, Tuple
+# markov_predictor.py
+
+from typing import Dict, List, Optional, Tuple
 from collections import deque
-from access_patterns import generate_interleaved_pattern, generate_markdown_table, generate_random_pattern, generate_sequential_pattern, generate_strided_pattern, generate_repeated_pattern
+import random
+
+# 生成顺序访问模式
+def generate_sequential_pattern(length: int) -> List[int]:
+    return list(range(length))
+
+# 生成跨距访问模式
+def generate_strided_pattern(start: int, stride: int, length: int) -> List[int]:
+    return [start + i * stride for i in range(length)]
+
+# 生成交错访问模式
+def generate_interleaved_pattern(length: int) -> List[int]:
+    return [i for j in range(length // 2) for i in (2 * j, 2 * j + 1)]
+
+# 生成随机访问模式
+def generate_random_pattern(length: int) -> List[int]:
+    return [random.randint(0, length - 1) for _ in range(length)]
+
+# 生成重复访问模式
+def generate_repeated_pattern(pattern: List[int], repetitions: int) -> List[int]:
+    return pattern * repetitions
+
+# 生成Markdown表格
+def generate_markdown_table(results: Dict[str, float]) -> str:
+    header = "| 访问模式 | 预测准确性 |\n| -------- | ---------- |\n"
+    rows = [f"| {key} | {value:.2f} |" for key, value in results.items()]
+    return header + "\n".join(rows)
 
 def initialize_transition_table(num_addresses: int) -> List[List[int]]:
     """初始化转移表，用于记录地址之间的转移次数。"""

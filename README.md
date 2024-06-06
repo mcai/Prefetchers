@@ -4,8 +4,7 @@
 
 ## 文件
 
-- `markov_predictor.py`: 包含Markov预取器的实现及其模拟。
-- `access_patterns.py`: 包含生成不同内存访问模式的函数和生成Markdown表格结果的函数。
+- `markov_predictor.py`: 包含Markov预取器的实现及其模拟，包括生成不同内存访问模式的函数和生成Markdown表格结果的函数。
 
 ## 使用方法
 
